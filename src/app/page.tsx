@@ -30,28 +30,73 @@ export default function PortfolioPage() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved) as Partial<PortfolioState>;
-        if (Array.isArray(parsed.projects)) setProjects(parsed.projects);
-        if (Array.isArray(parsed.skills)) setSkills(parsed.skills);
-        if (typeof parsed.photo === "string") setPhoto(parsed.photo);
-        if (parsed.theme && parsed.theme in themeOptions) setTheme(parsed.theme);
+    const loadPortfolio = async () => {
+      try {
+        const response = await fetch("/api/portfolio");
+        if (!response.ok) throw new Error("Could not load portfolio from Neon");
+
+        const data = await response.json();
+        let content = data.content as Partial<PortfolioState> | null;
+
+        // If Neon is empty, migrate this browser's existing portfolio data once.
+        if (!content || Object.keys(content).length === 0) {
+          const local = localStorage.getItem(STORAGE_KEY);
+          content = local
+            ? (JSON.parse(local) as Partial<PortfolioState>)
+            : {
+                projects: defaultProjects,
+                skills: defaultSkills,
+                photo: "",
+                theme: "botanical",
+              };
+
+          const saveResponse = await fetch("/api/portfolio", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(content),
+          });
+
+          if (!saveResponse.ok) {
+            throw new Error("Could not migrate existing portfolio data to Neon");
+          }
+        }
+
+        if (Array.isArray(content.projects)) setProjects(content.projects);
+        if (Array.isArray(content.skills)) setSkills(content.skills);
+        if (typeof content.photo === "string") setPhoto(content.photo);
+        if (content.theme && content.theme in themeOptions) {
+          setTheme(content.theme);
+        }
+
+        setReady(true);
+      } catch (error) {
+        console.error("Portfolio loading error:", error);
+        alert("Could not load your portfolio from Neon. Please check your database connection and refresh.");
       }
-    } catch (error) {
-      console.warn("Could not load saved portfolio data.", error);
-    }
-    setReady(true);
+    };
+
+    loadPortfolio();
   }, []);
 
   useEffect(() => {
     if (!ready) return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ projects, skills, photo, theme }));
-    } catch (error) {
-      console.warn("Portfolio data could not be saved. The uploaded photo may be too large.", error);
-    }
+
+    const timer = window.setTimeout(async () => {
+      try {
+        const response = await fetch("/api/portfolio", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ projects, skills, photo, theme }),
+        });
+
+        if (!response.ok) throw new Error("Portfolio save failed");
+        console.log("Portfolio saved to Neon");
+      } catch (error) {
+        console.error("Portfolio save error:", error);
+      }
+    }, 700);
+
+    return () => window.clearTimeout(timer);
   }, [ready, projects, skills, photo, theme]);
 
 
