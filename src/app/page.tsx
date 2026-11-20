@@ -106,7 +106,12 @@ export default function PortfolioPage() {
         <section id="projects" className="section"><span className="tag">03 — Projects</span><h2 className="heading">Things I’ve been building.</h2><p className="muted">Ideas, experiments, and projects along my learning journey.</p><div className="grid3">{projects.map((project) => <article className="card project" key={project.id}><div style={{ color: colors.accent, fontSize: 27 }}>✳</div><h3>{project.title}</h3><p>{project.description}</p><div className="tech">{project.tech}</div>{project.link.trim() !== "" && <a className="btn" href={project.link} target="_blank" rel="noreferrer">Visit project ↗</a>}</article>)}</div></section>
 
         <section id="contact" className="section"><span className="tag">04 — Contact</span><h2 className="heading">Let’s connect & grow.</h2><p className="muted" style={{ maxWidth: 620 }}>Open to learning, collaboration, research opportunities, and connecting with people who are passionate about science and technology.</p><div className="contactgrid"><a className="card" href="mailto:hajirasaadullah03@gmail.com" style={{ color: "inherit", textDecoration: "none" }}><h3>✉ Email</h3><p className="muted">Get in touch</p></a><a className="card" href="https://github.com/hajira285" target="_blank" rel="noreferrer" style={{ color: "inherit", textDecoration: "none" }}><h3>⌘ GitHub</h3><p className="muted">Explore my code</p></a><a className="card" href="https://www.linkedin.com/in/hajira-saadullah-414989409/" target="_blank" rel="noreferrer" style={{ color: "inherit", textDecoration: "none" }}><h3>in LinkedIn</h3><p className="muted">Connect professionally</p></a></div></section>
-
+<a
+  href="/admin"
+  className="text-sm opacity-60 hover:opacity-100 transition"
+>
+  Admin Login
+</a>
         <footer className="footer"><div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}><span>© 2026 Hajira SaadUllah</span><span>Built with curiosity & ☕</span></div></footer>
       </div>
     </main>
