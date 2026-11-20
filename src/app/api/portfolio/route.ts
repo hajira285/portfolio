@@ -1,6 +1,7 @@
 
 import { neon } from "@neondatabase/serverless";
 import { NextResponse } from "next/server";
+import { verifyAdminSession } from "@/lib/adminAuth";
 
 export async function GET() {
   try {
@@ -28,9 +29,16 @@ export async function GET() {
 }
 
 export async function PUT(request: Request) {
+  // Only authenticated admins can save portfolio changes.
+  if (!verifyAdminSession(request)) {
+    return NextResponse.json(
+      { success: false, message: "Unauthorized. Please log in." },
+      { status: 401 }
+    );
+  }
+
   try {
     const body = await request.json();
-
     const sql = neon(process.env.DATABASE_URL!);
 
     await sql`
