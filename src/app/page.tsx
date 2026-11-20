@@ -79,11 +79,34 @@ export default function PortfolioPage() {
         @media(max-width:740px){.navlinks{display:none}.hero{grid-template-columns:1fr;text-align:center;padding-top:40px}.hero h1{letter-spacing:-2px}.heroactions{justify-content:center}.grid3,.contactgrid{grid-template-columns:1fr}.section{padding:50px 0}.profile{width:235px;height:235px}.heading{letter-spacing:-1px}}
       `}</style>
       <div className="wrap">
-        <nav className="nav">
-          <a href="#top" style={{ color: colors.accent, fontWeight: 800, textDecoration: "none", fontSize: 22 }}>HS.</a>
-          <div className="navlinks"><a href="#about">About</a><a href="#skills">Skills</a><a href="#projects">Projects</a><a href="#contact">Contact</a></div>
-          <button className="btn" onClick={toggleMode}>{dark ? "☀️ Light mode" : "🌙 Dark mode"}</button>
-        </nav>
+        
+
+
+<a
+  href="#top"
+  onClick={(e) => {
+    e.preventDefault();
+
+    const now = Date.now();
+    const lastTap = Number(sessionStorage.getItem("hsLastTap") || 0);
+
+    if (now - lastTap < 600 && lastTap !== 0) {
+      sessionStorage.removeItem("hsLastTap");
+      window.location.href = "/admin";
+    } else {
+      sessionStorage.setItem("hsLastTap", String(now));
+    }
+  }}
+  style={{
+    color: colors.accent,
+    fontWeight: 800,
+    textDecoration: "none",
+    fontSize: 22,
+    cursor: "pointer"
+  }}
+>
+  HS.
+</a>
 
         <section className="hero" id="top">
           <div>
@@ -106,12 +129,7 @@ export default function PortfolioPage() {
         <section id="projects" className="section"><span className="tag">03 — Projects</span><h2 className="heading">Things I’ve been building.</h2><p className="muted">Ideas, experiments, and projects along my learning journey.</p><div className="grid3">{projects.map((project) => <article className="card project" key={project.id}><div style={{ color: colors.accent, fontSize: 27 }}>✳</div><h3>{project.title}</h3><p>{project.description}</p><div className="tech">{project.tech}</div>{project.link.trim() !== "" && <a className="btn" href={project.link} target="_blank" rel="noreferrer">Visit project ↗</a>}</article>)}</div></section>
 
         <section id="contact" className="section"><span className="tag">04 — Contact</span><h2 className="heading">Let’s connect & grow.</h2><p className="muted" style={{ maxWidth: 620 }}>Open to learning, collaboration, research opportunities, and connecting with people who are passionate about science and technology.</p><div className="contactgrid"><a className="card" href="mailto:hajirasaadullah03@gmail.com" style={{ color: "inherit", textDecoration: "none" }}><h3>✉ Email</h3><p className="muted">Get in touch</p></a><a className="card" href="https://github.com/hajira285" target="_blank" rel="noreferrer" style={{ color: "inherit", textDecoration: "none" }}><h3>⌘ GitHub</h3><p className="muted">Explore my code</p></a><a className="card" href="https://www.linkedin.com/in/hajira-saadullah-414989409/" target="_blank" rel="noreferrer" style={{ color: "inherit", textDecoration: "none" }}><h3>in LinkedIn</h3><p className="muted">Connect professionally</p></a></div></section>
-<a
-  href="/admin"
-  className="text-sm opacity-60 hover:opacity-100 transition"
->
-  Admin Login
-</a>
+
         <footer className="footer"><div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}><span>© 2026 Hajira SaadUllah</span><span>Built with curiosity & ☕</span></div></footer>
       </div>
     </main>
